@@ -1,0 +1,9 @@
+Version numbering convention and mapping with Redmine tracker types.
+
+first.second.third
+
+first) when the interface change
+second) internal changes or new features without interface change (Redmine tracker: "feature", "story/task" 
+third) bug fixing (Redmine tracker: "bug")
+
+Redmine tracker: "task" -> it depends by the changes in the code (on interface). e.g. refactoring is tracked as "task".

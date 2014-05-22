@@ -1,0 +1,107 @@
+C++ template for code commenting
+In the following the code commenting rules are reported.
+Use the Doxyfile to generate documentation.
+
+A complete list of doxygen commands is reported here:
+[[http://www.stack.nl/~dimitri/doxygen/manual/commands.html]]
+
+
+Headers for .h and .cpp
+
+/***************************************************************************
+    begin                : Thu Nov 29 2001
+    copyright            : (C) 2001 Andrea Bulgarelli
+    email                : bulgarelli@iasfbo.inaf.it
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software for non commercial purpose              *
+ *   and for public research institutes; you can redistribute it and/or    *
+ *   modify it under the terms of the GNU General Public License.          *
+ *   For commercial purpose see appropriate license terms                  *
+ *                                                                         *
+ ***************************************************************************/
+
+
+.h
+
+Each .h should contain only the definition of one class.
+
+After the header of the file
+
+#ifndef _FILENAME_H
+#define _FILENAME_H
+
+#endif 
+
+
+comment for classes
+/// Insert here the description of the class
+/// \brief Insert here a brief description of the class
+class A {
+
+};
+
+Comment for methods
+/// Returns a pointer of a field in the list of fields of this part of packet.
+/// \pre The file must be opened.
+/// \param index Represent the index in the list.
+/// \param[in] argc The argument count.
+/// \param[in,out] argv The argument values (changed after parsing).
+/// \param[out] outv The output string values.
+/// \return true if file is closed, false if file is opened.
+/// \exception manage this exception
+/// \post A side effects of this method is that the value of fields of packet are setted 
+/// \remarks Some remarks
+void methodName(int a, char* b);
+
+
+Comment for attributes
+/// The attribute store the pointer
+int nameOfAttribute;
+
+
+An example of .h
+
+/***************************************************************************
+    begin                : Aug 06 2013
+    copyright            : (C) 2013 Andrea Bulgarelli
+    email                : bulgarelli@iasfbo.inaf.it
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software for non commercial purpose              *
+ *   and for public research institutes; you can redistribute it and/or    *
+ *   modify it under the terms of the GNU General Public License.          *
+ *   For commercial purpose see appropriate license terms                  *
+ *                                                                         *
+ ***************************************************************************/
+
+#ifndef _FILENAME_H
+#define _FILENAME_H
+
+/// Insert here the description of the class
+/// \brief Insert here a brief description of the class
+class A {
+
+public:
+    /// Elaborate an array
+    /// \pre The file must be opened.
+    /// \param[in] index Represent the index in the list.
+    /// \param[out]    a the index with the max value.
+    /// \return a pointer to an array or zero if no data are present
+    /// \exception std::out_of_range parameter is out of range.
+    /// \post no side effects.
+    /// \remarks Some remarks.
+    int* elaborateArray(int index, int &a ) throw(std::out_of_range);
+
+private:
+
+    /// A local array
+    int* arrayB;
+
+};
+
+#endif 
