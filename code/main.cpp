@@ -231,6 +231,7 @@ int main(int argc, char *argv[]) {
 			//build the dictionary of packets that should be recognized by the InputPacketStream
 			byte checCamId = p->getPacketID();
 			int indexNPixels = p->getPacketSourceDataField()->getFieldIndex("Number of pixels");
+			int indexNSamples = p->getPacketSourceDataField()->getFieldIndex("Number of samples");
 			int indexEventNumber = p->getPacketSourceDataField()->getFieldIndex("eventNumber");
 			int indexTimes = p->getPacketDataFieldHeader()->getFieldIndex("Ttime:secs");
 			int indexTimens = p->getPacketDataFieldHeader()->getFieldIndex("Ttime:nsecs");
@@ -262,15 +263,27 @@ int main(int argc, char *argv[]) {
 					if(operation == 3) {
 						//e.g. get the camera data to send the packet to a process for data analysis or for storage
 						int npixels =  packet_sdf->getFieldValue(indexNPixels);
+						int nsamples =  packet_sdf->getFieldValue(indexNSamples);
 						dword times =  packet_datafieldheader->getFieldValue_32i(indexTimes);
 						dword timensn = packet_datafieldheader->getFieldValue_32ui(indexTimens);
 						dword eventnum = packet_sdf->getFieldValue_32ui(indexEventNumber);
 						
-
+						//get the array of camera data
+						ByteStreamPtr cameraDataBS = p->getBSSourceDataFieldsVariablePart();
 						
-						ByteStreamPtr cameraData = p->getBSSourceDataFieldsVariablePart();
+						cameraDataBS->swapWordForIntel(); //take into account the endianity
 						
-						//do something
+						//do something with camera data
+						word* cameraData = (word*)cameraDataBS->stream;
+						
+						/*
+						for(word pixel=0; pixel<npixels; pixel++) {
+							for(word sample=0; sample<nsamples; sample++) {
+								cout << cameraData[pixel*nsamples + sample] << " ";
+							}
+							cout << endl;
+						}
+						*/
 					}
 				}
 			}
