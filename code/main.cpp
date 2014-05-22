@@ -73,9 +73,7 @@ unsigned long encodeNotZeroSuppressedPixels(OutputPacketStream* ops, int nevents
 			//3) encode the packet with the ByteStream of camera data
 			p->encodeAndSetData(sourcedata);
 			
-			//p->compress(LZH, 4);
-			
-			//cout << "A " << packet_header->getFieldValue("Compression Level") << endl;
+			p->compressData(LZH, 4);
 		
 			//write the encoded packet to output
 			ops->writePacket(p);
@@ -256,7 +254,7 @@ int main(int argc, char *argv[]) {
 					if(operation == 2) {
 						//e.g. get the camera data to send the packet to a process for data analysis or for storage
 						int npixels = p->getPacketSourceDataField()->getFieldValue(indexNPixels);
-						ByteStreamPtr cameraData = p->getBSSourceDataFieldsVariablePart();
+						ByteStreamPtr cameraData = p->getData();
 						
 						//do something
 					}
@@ -269,12 +267,20 @@ int main(int argc, char *argv[]) {
 						dword eventnum = packet_sdf->getFieldValue_32ui(indexEventNumber);
 						
 						//get the array of camera data
-						ByteStreamPtr cameraDataBS = p->getBSData();
+						ByteStreamPtr cameraDataBS = p->getData();
 						
 						cameraDataBS->swapWordForIntel(); //take into account the endianity
 						
+						cout << cameraDataBS->size() << " " << p->isCompressed() << " " << p->getCompressionAlgorithm() << " " << p->getCompressionLevel() <<  endl;
+						
+						
+						ByteStreamPtr cameraDataDecompressed = cameraDataBS;
+						
+						//if(p->isCompressed())
+						//	cameraDataDecompressed = p->decompressData();
+						
 						//do something with camera data
-						word* cameraData = (word*)cameraDataBS->stream;
+						word* cameraData = (word*)cameraDataDecompressed->stream;
 						
 						/*
 						for(word pixel=0; pixel<npixels; pixel++) {
