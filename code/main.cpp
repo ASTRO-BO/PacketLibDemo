@@ -72,7 +72,7 @@ unsigned long encodeNotZeroSuppressedPixels(OutputPacketStream* ops, int nevents
 			//3) encode the packet with the ByteStream of camera data
 			p->encodeAndSetData(sourcedata);
 			
-			p->compress(LZH, 8);
+			p->compress(LZH, 4);
 			
 			//cout << "A " << packet_header->getFieldValue("Compression Level") << endl;
 		
@@ -234,8 +234,9 @@ int main(int argc, char *argv[]) {
 			//build the dictionary of packets that should be recognized by the InputPacketStream
 			byte checCamId = p->getPacketID();
 			int indexNPixels = packet_sdf->getFieldIndex("Number of pixels");
-			int indexTimes = packet_datafieldheader->getFieldValueIndex("Ttime:secs");
-			int indexTimens = packet_datafieldheader->getFieldValueIndex("Ttime:secs");
+			int indexEventNumber = packet_sdf->getFieldIndex("eventNumber");
+			int indexTimes = packet_datafieldheader->getFieldIndex("Ttime:secs");
+			int indexTimens = packet_datafieldheader->getFieldIndex("Ttime:nsecs");
 			
 			//decode for routing
 			while(ips->readPacket()) {
@@ -253,7 +254,6 @@ int main(int argc, char *argv[]) {
 					if(operation == 2) {
 						//e.g. get the camera data to send the packet to a process for data analysis or for storage
 						int npixels = p->getPacketSourceDataField()->getFieldValue(indexNPixels);
-						
 						ByteStreamPtr cameraData = p->getBSSourceDataFieldsVariablePart();
 						
 						//do something
@@ -262,8 +262,9 @@ int main(int argc, char *argv[]) {
 						//e.g. get the camera data to send the packet to a process for data analysis or for storage
 						int npixels =  packet_sdf->getFieldValue(indexNPixels);
 						dword times =  packet_datafieldheader->getFieldValue_32ui(indexTimes);
-						dword timens = packet_datafieldheader->setFieldValue_32ui(indexTimens);
-						dword eventnum = packet_sdf->setFieldValue_32ui("eventNumber");
+						dword timensn = packet_datafieldheader->getFieldValue_32ui(indexTimens);
+						dword eventnum = packet_sdf->getFieldValue_32ui(indexEventNumber);
+						cout << times << " " << timensn << " " << eventnum << endl;
 
 						
 						ByteStreamPtr cameraData = p->getBSSourceDataFieldsVariablePart();
