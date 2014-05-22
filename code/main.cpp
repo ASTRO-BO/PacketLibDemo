@@ -269,7 +269,7 @@ int main(int argc, char *argv[]) {
 						dword eventnum = packet_sdf->getFieldValue_32ui(indexEventNumber);
 						
 						//get the array of camera data
-						ByteStreamPtr cameraDataBS = p->getBSSourceDataFieldsVariablePart();
+						ByteStreamPtr cameraDataBS = p->getBSData();
 						
 						cameraDataBS->swapWordForIntel(); //take into account the endianity
 						
