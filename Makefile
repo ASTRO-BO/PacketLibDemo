@@ -81,6 +81,10 @@ ifneq (, $(findstring ctarta, $(LINKERENV)))
 	LIBS += -lpacket 
 endif
 
+ifneq (, $(findstring linux, $(SYSTEM)))
+        LIBS += -lrt
+endif
+
 #Set addition parameters that depends by operating system
 
 

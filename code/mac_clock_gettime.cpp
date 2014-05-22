@@ -18,6 +18,7 @@
 #include "mac_clock_gettime.h"
 
 //clock_gettime is not implemented on OSX
+#ifdef __MACH__
 int clock_gettime(int clk_id, struct timespec* t) {
     struct timeval now;
     int rv = gettimeofday(&now, NULL);
@@ -26,6 +27,7 @@ int clock_gettime(int clk_id, struct timespec* t) {
     t->tv_nsec = now.tv_usec * 1000;
     return 0;
 }
+#endif
 
 double timediff(struct timespec start, struct timespec stop){
 	double secs = (stop.tv_sec - start.tv_sec) + (stop.tv_nsec - start.tv_nsec) / (double)NANO;
