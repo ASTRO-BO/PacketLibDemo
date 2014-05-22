@@ -67,12 +67,13 @@ unsigned long encodeNotZeroSuppressedPixels(OutputPacketStream* ops, int nevents
 					word sampleValue = sample;
 					cameraData[pixel][sample] = sampleValue;
 				}
+			
 			//2) create a ByteStream that manage the array. Cast the camera data to an array of bytes
 			ByteStreamPtr sourcedata = ByteStreamPtr(new ByteStream((byte*) cameraData, cameraDataSize, ops->isBigEndian()));
 			//3) encode the packet with the ByteStream of camera data
 			p->encodeAndSetData(sourcedata);
 			
-			p->compress(LZH, 4);
+			//p->compress(LZH, 4);
 			
 			//cout << "A " << packet_header->getFieldValue("Compression Level") << endl;
 		
@@ -226,17 +227,13 @@ int main(int argc, char *argv[]) {
 				cout << "Get the array of camera data and additional data" << endl;
 			//get the packet
 			Packet* p = ips->getPacketType("CHEC-CAM");
-			//get sections
-			PacketHeader* packet_header = p->getPacketHeader();
-			DataFieldHeader* packet_datafieldheader = p->getPacketDataFieldHeader();
-			SourceDataField* packet_sdf = (SourceDataField*) p->getPacketSourceDataField();
 			
 			//build the dictionary of packets that should be recognized by the InputPacketStream
 			byte checCamId = p->getPacketID();
-			int indexNPixels = packet_sdf->getFieldIndex("Number of pixels");
-			int indexEventNumber = packet_sdf->getFieldIndex("eventNumber");
-			int indexTimes = packet_datafieldheader->getFieldIndex("Ttime:secs");
-			int indexTimens = packet_datafieldheader->getFieldIndex("Ttime:nsecs");
+			int indexNPixels = p->getPacketSourceDataField()->getFieldIndex("Number of pixels");
+			int indexEventNumber = p->getPacketSourceDataField()->getFieldIndex("eventNumber");
+			int indexTimes = p->getPacketDataFieldHeader()->getFieldIndex("Ttime:secs");
+			int indexTimens = p->getPacketDataFieldHeader()->getFieldIndex("Ttime:nsecs");
 			
 			//decode for routing
 			while(ips->readPacket()) {
@@ -245,6 +242,10 @@ int main(int argc, char *argv[]) {
 					cout << "Packet not recognized" << endl;
 				//search only CHEC-CAM packets
 				if(p->getPacketID() == checCamId) {
+					PacketHeader* packet_header = p->getPacketHeader();
+					DataFieldHeader* packet_datafieldheader = p->getPacketDataFieldHeader();
+					SourceDataField* packet_sdf = (SourceDataField*) p->getPacketSourceDataField();
+					
 					//packet recognized, do something, e.g.
 					
 					//get the size of the packet
@@ -261,10 +262,10 @@ int main(int argc, char *argv[]) {
 					if(operation == 3) {
 						//e.g. get the camera data to send the packet to a process for data analysis or for storage
 						int npixels =  packet_sdf->getFieldValue(indexNPixels);
-						dword times =  packet_datafieldheader->getFieldValue_32ui(indexTimes);
+						dword times =  packet_datafieldheader->getFieldValue_32i(indexTimes);
 						dword timensn = packet_datafieldheader->getFieldValue_32ui(indexTimens);
 						dword eventnum = packet_sdf->getFieldValue_32ui(indexEventNumber);
-						cout << times << " " << timensn << " " << eventnum << endl;
+						
 
 						
 						ByteStreamPtr cameraData = p->getBSSourceDataFieldsVariablePart();
