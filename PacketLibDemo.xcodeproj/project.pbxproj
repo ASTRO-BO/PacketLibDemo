@@ -27,6 +27,7 @@
 		DD1EB467192DD93F008479D5 /* CHEC-CAM.packet */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "CHEC-CAM.packet"; sourceTree = "<group>"; };
 		DD1EB468192DDA3B008479D5 /* packetlibop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = packetlibop.cpp; sourceTree = "<group>"; };
 		DD1EB469192DDA3B008479D5 /* packetlibop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = packetlibop.h; sourceTree = "<group>"; };
+		DD1EB46A192E9724008479D5 /* ctacamera_all.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ctacamera_all.xml; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -56,6 +57,7 @@
 		DD1EB45B192CF81A008479D5 /* conf */ = {
 			isa = PBXGroup;
 			children = (
+				DD1EB46A192E9724008479D5 /* ctacamera_all.xml */,
 				DD1EB467192DD93F008479D5 /* CHEC-CAM.packet */,
 				DD1EB45C192CF81A008479D5 /* ctacamera_all.stream */,
 				DD1EB45D192CF81A008479D5 /* CTAheader.header */,

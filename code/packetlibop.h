@@ -30,7 +30,8 @@ using namespace PacketLib;
 void endMiB(bool exitprg, struct timespec start, unsigned long totbytes );
 void endHertz(bool exitprg, struct timespec start, unsigned long totbytes, unsigned long nops);
 
+unsigned long encodeNotZeroSuppressedPixels(OutputPacketStream* ops, int neventstowrite, bool compress);
 unsigned long encodeNotZeroSuppressedPixelsSlow(OutputPacketStream* ops, int neventstowrite);
-
+unsigned long encodeZeroSuppressedPixels(OutputPacketStream* ops, int neventstowrite, bool compress);
 
 #endif

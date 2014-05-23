@@ -44,11 +44,11 @@
       </PathRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "0"
+            argument = "10"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "a_fast3.raw"
+            argument = "t1"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

@@ -22,76 +22,54 @@
 #include "packetlibop.h"
 
 
-
-
-
-unsigned long encodeNotZeroSuppressedPixels(OutputPacketStream* ops, int neventstowrite) {
+void swap(byte* stream, dword dim) {
 	
-	unsigned long totbytes = 0;
-	
-	try {
-		//get a packet to encode the data of a camera that manage 30 samples for each pixel
-		Packet* p = ops->getPacketType("CHEC-CAM");
-		
-		//get the sections of a packet
-		PacketHeader* packet_header = p->getPacketHeader();
-		DataFieldHeader* packet_datafieldheader = p->getPacketDataFieldHeader();
-		SourceDataField* packet_sdf = (SourceDataField*) p->getPacketSourceDataField();
-		
-		//get the number of samples managed by the packet
-		word numPixelSamples = packet_sdf->getFieldValue("Number of samples");
-		
-		word numberOfCameraPixels = 2048;
-		packet_sdf->setNumberOfBlocks(numberOfCameraPixels);
-		
-		//time of trigger
-		unsigned long timetrigger = 100000;
-		
-		//an array of data of pixels
-		word cameraData[numberOfCameraPixels][numPixelSamples];
-		dword cameraDataSize = numberOfCameraPixels*numPixelSamples*sizeof(word);
-		
-		for(int i=0; i<neventstowrite; i++) {
-			
-			//store some informations on the headers
-			packet_datafieldheader->setFieldValue_32ui("Ttime:secs", timetrigger++);
-			packet_datafieldheader->setFieldValue_32ui("Ttime:nsecs", rand());
-			packet_sdf->setFieldValue_32ui("eventNumber", i);
-			
-			
-			//use the packetlib to set an array of pixels into the stream
-			
-			//1) set the array
-			for(word pixel=0; pixel<numberOfCameraPixels; pixel++)
-				for(word sample=0; sample<numPixelSamples; sample++) {
-					word sampleValue = sample;
-					cameraData[pixel][sample] = sampleValue;
-				}
-			
-			//2) create a ByteStream that manage the array. Cast the camera data to an array of bytes
-			ByteStreamPtr sourcedata = ByteStreamPtr(new ByteStream((byte*) cameraData, cameraDataSize, ops->isBigEndian()));
-			//3) encode the packet with the ByteStream of camera data
-			p->encodeAndSetData(sourcedata);
-			
-			p->compressData(LZH, 4);
-		
-			//write the encoded packet to output
-			ops->writePacket(p);
-			
-			//get the size of the packet (only for measurement of performances)
-			dword packetSize = p->size();
-			totbytes += packetSize;
-		
-		}
-
-	}
-	catch (PacketException* e)
+	for(dword i = 0; i< dim; i+=2)
 	{
-		cout << "Error oduring encoding: ";
-		cout << e->geterror() << endl;
+		/// For odd dimensions
+		if((dim - i) != 1)
+		{
+			byte btemp = stream[i];
+			stream[i] = stream[i+1];
+			stream[i+1] = btemp;
+		}
 	}
-	return totbytes;
 }
+
+dword getdword(dword value, bool streamisbigendian) {
+	if(streamisbigendian)
+		return value;
+	else {
+		
+		dword tmp = value << 16;
+		cout << tmp << endl;
+		tmp += value >> 16;
+		cout << tmp << endl;
+		return tmp;
+	}
+}
+
+
+struct CTAHeaders {
+	word idAndAPID;
+	word ssc;
+	dword packetLenght;
+	word crcTypeAndSubtype;
+	word compression;
+	dword times;
+	dword timens;
+	word arrayID;
+	word runNumber;
+	dword eventNumber;
+	word telescopID;
+	word arrayTriggerData;
+	word npixels;
+	word nsamples;
+	word npixelsID;
+};
+
+
+
 
 int main(int argc, char *argv[]) {
 	
@@ -101,15 +79,18 @@ int main(int argc, char *argv[]) {
 	struct timespec start;
 	
 	if(argc < 3) {
-		cout << "Parameters: encode(0)/decode(1) file.raw " << endl;
-		cout << "0 encoding" << endl;
+		cout << "Parameters: operation file.raw " << endl;
+		cout << "0 encoding not zero suppressed camera (not compressed)" << endl;
+		cout << "1 encoding not zero suppressed camera (compressed)" << endl;
+		//cout << "2 encoding zero suppressed camera (not compressed)" << endl;
+		//cout << "3 encoding zero suppressed camera (compressed)" << endl;
+		cout << "4 decoding for routing" << endl;
+		cout << "5 decoding and get the array of camera data" << endl;
+		cout << "6 decoding and get the array of camera data, additional data in the headers + decompression of data (if compressed)";
 		exit(0);
 	}
-	
-	
+
 	string ctarta;
-	
-	
 	
 	if(argc > 1) {
 		const char* home = getenv("CTARTA");
@@ -140,9 +121,9 @@ int main(int argc, char *argv[]) {
 		cout << configFileName << endl;
 		
 		//load the configuration files
-		if(operation == 0)
+		if(operation <= 3 )
 		{
-			// create output packet stream
+			cout << "create output packet stream" << endl;
 			ops = new OutputPacketStream();
 			ops->setFileNameConfig(configFileName.c_str());
 			ops->createStreamStructure();
@@ -167,9 +148,9 @@ int main(int argc, char *argv[]) {
 			// connect the output packet stream with the output
 			ops->setOutput(out);
 		}
-		if(operation >= 1)
+		if(operation > 3 && operation < 10)
 		{
-			// create input packet stream
+			cout << "create input packet stream" << endl;
 			ips = new InputPacketStream();
 			ips->setFileNameConfig(configFileName.c_str());
 			ips->createStreamStructure();
@@ -210,19 +191,33 @@ int main(int argc, char *argv[]) {
 	srand(1);
 	if(operation == 0) {
 		//the second parameter is the number of triggered event to write into files
-		totbytes = encodeNotZeroSuppressedPixels(ops, 1000);
+		totbytes = encodeNotZeroSuppressedPixels(ops, 1000, false);
 		endMiB(true, start, totbytes);
 	}
-	
-	
-	if(operation >= 1) {
+	if(operation == 1) {
+		//the second parameter is the number of triggered event to write into files
+		totbytes = encodeNotZeroSuppressedPixels(ops, 1000, true);
+		endMiB(true, start, totbytes);
+	}
+	if(operation == 2) {
+		//the second parameter is the number of triggered event to write into files
+		totbytes = encodeZeroSuppressedPixels(ops, 1000, false);
+		endMiB(true, start, totbytes);
+	}
+	if(operation == 3) {
+		//the second parameter is the number of triggered event to write into files
+		totbytes = encodeZeroSuppressedPixels(ops, 1000, true);
+		endMiB(true, start, totbytes);
+	}
+	if(operation >= 4 && operation < 10) {
 		try {
-			if(operation == 1)
-				cout << "Test for routing" << endl;
-			if(operation == 2)
-				cout << "Get the array of camera data" << endl;
-			if(operation == 3)
-				cout << "Get the array of camera data and additional data" << endl;
+			if(operation == 4)
+				cout << "4 decoding for routing" << endl;
+			if(operation == 5)
+				cout << "5 decoding and get the array of camera data" << endl;
+			if(operation == 6)
+				cout << "6 decoding and get the array of camera data, additional data in the headers + decompression of data (if compressed)" << endl;
+			
 			//get the packet
 			Packet* p = ips->getPacketType("CHEC-CAM");
 			
@@ -251,29 +246,30 @@ int main(int argc, char *argv[]) {
 					dword packetSize = p->size();
 					totbytes += packetSize;
 					
-					if(operation == 2) {
+					if(operation == 5) {
 						//e.g. get the camera data to send the packet to a process for data analysis or for storage
 						int npixels = p->getPacketSourceDataField()->getFieldValue(indexNPixels);
 						ByteStreamPtr cameraData = p->getData();
 						
 						//do something
 					}
-					if(operation == 3) {
+					if(operation == 6) {
 						//e.g. get the camera data to send the packet to a process for data analysis or for storage
 						int npixels =  packet_sdf->getFieldValue(indexNPixels);
 						int nsamples =  packet_sdf->getFieldValue(indexNSamples);
 						dword times =  packet_datafieldheader->getFieldValue_32i(indexTimes);
 						dword timensn = packet_datafieldheader->getFieldValue_32ui(indexTimens);
 						dword eventnum = packet_sdf->getFieldValue_32ui(indexEventNumber);
+						cout << npixels << " " << nsamples << " " << times << " " << eventnum << endl;
+						cout << p->getPacketHeader()->getPacketLength() << endl;
 						
 						//get the array of camera data
 						ByteStreamPtr cameraDataBS = p->getData();
 						
 						cameraDataBS->swapWordForIntel(); //take into account the endianity
 						
-						cout << cameraDataBS->size() << " " << p->isCompressed() << " " << p->getCompressionAlgorithm() << " " << p->getCompressionLevel() <<  endl;
-						
-						
+						//cout << cameraDataBS->size() << " " << p->isCompressed() << " " << p->getCompressionAlgorithm() << " " << p->getCompressionLevel() <<  endl;
+
 						ByteStreamPtr cameraDataDecompressed = cameraDataBS;
 						
 						//if(p->isCompressed())
@@ -282,6 +278,7 @@ int main(int argc, char *argv[]) {
 						//do something with camera data
 						word* cameraData = (word*)cameraDataDecompressed->stream;
 						
+						//process the camera data
 						/*
 						for(word pixel=0; pixel<npixels; pixel++) {
 							for(word sample=0; sample<nsamples; sample++) {
@@ -290,6 +287,7 @@ int main(int argc, char *argv[]) {
 							cout << endl;
 						}
 						*/
+						
 					}
 				}
 			}
@@ -303,6 +301,60 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	
+	
+	if(operation == 10) {
+		cout << "no packetlib" << endl;
+		FILE* fp = fopen(filename, "r");
+		word sizeHeader = sizeof(CTAHeaders);
+		byte* headers  = (byte*) new word[sizeHeader];
+		cout << sizeHeader << endl;
+		size_t result;
+		bool streamisbigendian = false;
+		long offset = 0;
+		//TODO
+		do {
+			
+			result = fread(headers, 1, sizeHeader, fp);
+			
+			if(result != sizeHeader)
+				break;
+			
+			//move to the next block of data
+			offset += sizeHeader;
+			fseek(fp, offset, 0);
+			//swap data if streaming is bigendian
+			if(streamisbigendian)
+				swap(headers, result);
+			
+			CTAHeaders* ctaheaders = (CTAHeaders*) headers;
+			dword packetLenght = getdword(ctaheaders->packetLenght, streamisbigendian) + 1;
+			byte* data  = (byte*) new word[packetLenght];
+			result = fread(data, 1, packetLenght, fp);
+			
+			if(result != packetLenght)
+				break;
+			
+			//move to the next block of data
+			offset += packetLenght;
+			fseek(fp, offset, 0);
+			//swap data if streaming is bigendian
+			if(streamisbigendian)
+				swap(headers, result);
+			word* cameraData = (word*) data;
+			
+			for(word pixel=0; pixel<ctaheaders->npixels; pixel++) {
+				for(word sample=0; sample<ctaheaders->nsamples; sample++) {
+					cout << cameraData[pixel*ctaheaders->nsamples + sample] << " ";
+				}
+				cout << endl;
+			}
+			
+			delete[] headers;
+			delete[] data;
+			
+		} while (result != sizeHeader);
+		fclose(fp);
+	}
 	
 	//delete ips;
 	//delete ops;
