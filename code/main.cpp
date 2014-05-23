@@ -107,7 +107,7 @@ int main(int argc, char *argv[]) {
 		return 0;
 	}
 	
-	string configFileName = ctarta + "/share/packetlibdemo/ctacamera_all.stream";
+	string configFileName = ctarta + "/share/packetlibdemo/ctacamera_all.xml";
 	
 	int operation = atoi(argv[1]);
 	char* filename = argv[2];
