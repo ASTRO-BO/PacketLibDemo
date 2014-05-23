@@ -118,6 +118,8 @@ unsigned long encodeNotZeroSuppressedPixels(OutputPacketStream* ops, int nevents
 		for(int i=0; i<neventstowrite; i++) {
 			
 			//store some informations on the headers
+			p->getPacketHeader()->setFieldValue("Packet Type", 2);
+			p->getPacketHeader()->setFieldValue("Packet Subtype", 40);
 			packet_datafieldheader->setFieldValue_32ui("Ttime:secs", timetrigger++);
 			packet_datafieldheader->setFieldValue_32ui("Ttime:nsecs", rand());
 			packet_sdf->setFieldValue_32ui("eventNumber", i);

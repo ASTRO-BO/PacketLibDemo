@@ -230,7 +230,7 @@ int main(int argc, char *argv[]) {
 			int indexTimens = p->getPacketDataFieldHeader()->getFieldIndex("Ttime:nsecs");
 			
 			//decode for routing
-			while(ips->readPacket()) {
+			while(p = ips->readPacket()) {
 				nops++;
 				if(p->getPacketID() == PACKETNOTRECOGNIZED)
 					cout << "Packet not recognized" << endl;
