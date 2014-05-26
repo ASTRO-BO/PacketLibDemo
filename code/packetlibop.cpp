@@ -224,7 +224,7 @@ unsigned long encodeZeroSuppressedPixels(OutputPacketStream* ops, int neventstow
 			
 			//4) compress the data
 			if(compress)
-				p->compressData(LZH, 4);
+				p->compressData(LZ4, 4);
 			
 			//write the encoded packet to output
 			ops->writePacket(p);
