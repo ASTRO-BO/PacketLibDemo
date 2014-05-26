@@ -139,6 +139,7 @@ unsigned long encodeNotZeroSuppressedPixels(OutputPacketStream* ops, int nevents
 			//3) encode the packet with the ByteStream of camera data
 			p->encodeAndSetData(sourcedata);
 			
+			//4) compress the data
 			if(compress)
 				p->compressData(LZH, 4);
 			
@@ -221,6 +222,7 @@ unsigned long encodeZeroSuppressedPixels(OutputPacketStream* ops, int neventstow
 			//3) encode the packet with the ByteStream of camera data
 			p->encodeAndSetData(sourcedata);
 			
+			//4) compress the data
 			if(compress)
 				p->compressData(LZH, 4);
 			

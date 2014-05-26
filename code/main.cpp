@@ -42,20 +42,22 @@ dword getdword(dword value, bool streamisbigendian) {
 	else {
 		
 		dword tmp = value << 16;
-		cout << tmp << endl;
+		//cout << tmp << endl;
 		tmp += value >> 16;
-		cout << tmp << endl;
+		//cout << tmp << endl;
 		return tmp;
 	}
 }
 
-
-struct CTAHeaders {
+struct CTAPacketHeaders {
 	word idAndAPID;
 	word ssc;
-	dword packetLenght;
+	dword packetLength;
 	word crcTypeAndSubtype;
 	word compression;
+};
+
+struct CTADataHeaders {
 	dword times;
 	dword timens;
 	word arrayID;
@@ -172,6 +174,7 @@ int main(int argc, char *argv[]) {
 			char** param = (char**) new char* [2];
 			param[0] = "10001"; //port
 			param[1] = 0;
+			in->open(param); /// open input
 			*/
 			
 			// connect the input packet stream with the input device
@@ -254,7 +257,9 @@ int main(int argc, char *argv[]) {
 						//do something
 					}
 					if(operation == 6) {
-						//e.g. get the camera data to send the packet to a process for data analysis or for storage
+						//e.g. get the camera data for data analysis or for storage
+						
+						//get information from the packet: number of pixels and samples, trigger time, event number, packet length
 						int npixels =  packet_sdf->getFieldValue(indexNPixels);
 						int nsamples =  packet_sdf->getFieldValue(indexNSamples);
 						dword times =  packet_datafieldheader->getFieldValue_32i(indexTimes);
@@ -272,21 +277,21 @@ int main(int argc, char *argv[]) {
 
 						ByteStreamPtr cameraDataDecompressed = cameraDataBS;
 						
-						//if(p->isCompressed())
-						//	cameraDataDecompressed = p->decompressData();
+						//if packet is compressed, decompress the data section
+						if(p->isCompressed())
+							cameraDataDecompressed = p->decompressData();
 						
-						//do something with camera data
+						//do something with camera data, e.g.
 						word* cameraData = (word*)cameraDataDecompressed->stream;
 						
 						//process the camera data
-						/*
 						for(word pixel=0; pixel<npixels; pixel++) {
 							for(word sample=0; sample<nsamples; sample++) {
-								cout << cameraData[pixel*nsamples + sample] << " ";
+								//cout << cameraData[pixel*nsamples + sample] << " ";
 							}
-							cout << endl;
+							//cout << endl;
 						}
-						*/
+						
 						
 					}
 				}
@@ -304,56 +309,100 @@ int main(int argc, char *argv[]) {
 	
 	if(operation == 10) {
 		cout << "no packetlib" << endl;
+		//open the file with the data
 		FILE* fp = fopen(filename, "r");
-		word sizeHeader = sizeof(CTAHeaders);
-		byte* headers  = (byte*) new word[sizeHeader];
-		cout << sizeHeader << endl;
+		//get the size of headers and allocate memory for headers
+		word sizePacketHeader = 12;
+		word sizeDataHeader = 26;
+		byte* packetheader  = (byte*) new word[sizePacketHeader];
+		byte* dataheader  = (byte*) new word[sizeDataHeader];
+		//cout << sizePacketHeader << " " << sizeDataHeader << endl;
 		size_t result;
+		//manage the endianity
 		bool streamisbigendian = false;
 		long offset = 0;
-		//TODO
+		int pnum = 0;
+		//read all packets of the file
 		do {
+			nops++;
+			//--------------------------
+			//1) read the packet header
+			result = fread(packetheader, 1, sizePacketHeader, fp);
 			
-			result = fread(headers, 1, sizeHeader, fp);
-			
-			if(result != sizeHeader)
+			if(result != sizePacketHeader)
 				break;
 			
 			//move to the next block of data
-			offset += sizeHeader;
-			fseek(fp, offset, 0);
+			offset += sizePacketHeader;
+			fseek(fp, offset, SEEK_SET);
 			//swap data if streaming is bigendian
 			if(streamisbigendian)
-				swap(headers, result);
+				swap(packetheader, result);
 			
-			CTAHeaders* ctaheaders = (CTAHeaders*) headers;
-			dword packetLenght = getdword(ctaheaders->packetLenght, streamisbigendian) + 1;
-			byte* data  = (byte*) new word[packetLenght];
-			result = fread(data, 1, packetLenght, fp);
+			//2) get the packet lenght
+			CTAPacketHeaders* packetheaderstruct = (CTAPacketHeaders*) packetheader;
+			dword packetLength = getdword(packetheaderstruct->packetLength, streamisbigendian) + 1;
 			
-			if(result != packetLenght)
+			
+			//--------------------------
+			//3) read the data header
+			result = fread(dataheader, 1, sizeDataHeader, fp);
+			
+			if(result != sizeDataHeader)
+				break;
+			
+			offset += sizeDataHeader;
+			fseek(fp, offset, SEEK_SET);
+			//swap data if streaming is bigendian
+			if(streamisbigendian)
+				swap(dataheader, result);
+			CTADataHeaders* dataheaderstruct = (CTADataHeaders*) dataheader;
+			
+			//--------------------------
+			//4) calculate the dimension of the "data" section and allocate the memory
+			dword sizeData = packetLength-sizeDataHeader;
+			byte* data  = (byte*) new byte[sizeData];
+			//read the data
+			result = fread(data, 1, sizeData, fp);
+			
+			if(result != sizeData)
 				break;
 			
 			//move to the next block of data
-			offset += packetLenght;
-			fseek(fp, offset, 0);
+			offset += sizeData;
+			fseek(fp, offset, SEEK_SET);
 			//swap data if streaming is bigendian
 			if(streamisbigendian)
-				swap(headers, result);
+				swap(data, result);
+			
+			//5) use the data of the camera
 			word* cameraData = (word*) data;
 			
-			for(word pixel=0; pixel<ctaheaders->npixels; pixel++) {
-				for(word sample=0; sample<ctaheaders->nsamples; sample++) {
-					cout << cameraData[pixel*ctaheaders->nsamples + sample] << " ";
-				}
+			byte compression = packetheaderstruct->compression >> 8;
+			
+			cout << pnum++ << " " << packetLength << " " << (int) compression << " "  << dataheaderstruct->npixels << " " << dataheaderstruct->nsamples << endl;
+			if(compression) {
+				//packet compressed
+				for(dword i=0; i< sizeData/2; i++)
+					cout << cameraData[i] << " ";
 				cout << endl;
+			}else {
+				//packet not compressed
+				
+				for(word pixel=0; pixel<dataheaderstruct->npixels; pixel++) {
+					for(word sample=0; sample<dataheaderstruct->nsamples; sample++) {
+						cout << cameraData[pixel*dataheaderstruct->nsamples + sample] << " ";
+					}
+					cout << endl;
+				}
+				
 			}
 			
-			delete[] headers;
 			delete[] data;
 			
-		} while (result != sizeHeader);
+		} while (true);
 		fclose(fp);
+		endHertz(true, start, offset, nops);
 	}
 	
 	//delete ips;
