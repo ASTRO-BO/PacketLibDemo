@@ -343,7 +343,6 @@ int main(int argc, char *argv[]) {
 			CTAPacketHeaders* packetheaderstruct = (CTAPacketHeaders*) packetheader;
 			dword packetLength = getdword(packetheaderstruct->packetLength, streamisbigendian) + 1;
 			
-			
 			//--------------------------
 			//3) read the data header
 			result = fread(dataheader, 1, sizeDataHeader, fp);
