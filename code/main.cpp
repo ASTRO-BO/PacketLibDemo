@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
 	struct timespec start;
 	
 	if(argc < 3) {
-		cout << "Parameters: operation file.raw " << endl;
+		cout << "Parameters: operation file.raw nevents " << endl;
 		cout << "0 encoding not zero suppressed camera (not compressed)" << endl;
 		cout << "1 encoding not zero suppressed camera (compressed)" << endl;
 		//cout << "2 encoding zero suppressed camera (not compressed)" << endl;
@@ -113,6 +113,7 @@ int main(int argc, char *argv[]) {
 	
 	int operation = atoi(argv[1]);
 	char* filename = argv[2];
+	int nevents = atoi(argv[3]);
 	
 	//Objects that manages a stream of byte
 	OutputPacketStream* ops = 0;
@@ -194,22 +195,22 @@ int main(int argc, char *argv[]) {
 	srand(1);
 	if(operation == 0) {
 		//the second parameter is the number of triggered event to write into files
-		totbytes = encodeNotZeroSuppressedPixels(ops, 1000, false);
+		totbytes = encodeNotZeroSuppressedPixels(ops, nevents, false);
 		endMiB(true, start, totbytes);
 	}
 	if(operation == 1) {
 		//the second parameter is the number of triggered event to write into files
-		totbytes = encodeNotZeroSuppressedPixels(ops, 1000, true);
+		totbytes = encodeNotZeroSuppressedPixels(ops, nevents, true);
 		endMiB(true, start, totbytes);
 	}
 	if(operation == 2) {
 		//the second parameter is the number of triggered event to write into files
-		totbytes = encodeZeroSuppressedPixels(ops, 1000, false);
+		totbytes = encodeZeroSuppressedPixels(ops, nevents, false);
 		endMiB(true, start, totbytes);
 	}
 	if(operation == 3) {
 		//the second parameter is the number of triggered event to write into files
-		totbytes = encodeZeroSuppressedPixels(ops, 1000, true);
+		totbytes = encodeZeroSuppressedPixels(ops, nevents, true);
 		endMiB(true, start, totbytes);
 	}
 	if(operation >= 4 && operation < 10) {

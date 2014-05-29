@@ -94,6 +94,7 @@ unsigned long encodeNotZeroSuppressedPixels(OutputPacketStream* ops, int nevents
 	unsigned long totbytes = 0;
 	
 	try {
+		cout << "Write " << neventstowrite << " events " << endl;
 		//get a packet to encode the data of a camera that manage 30 samples for each pixel
 		Packet* p = ops->getPacketType("CHEC-CAM");
 		
@@ -170,6 +171,7 @@ unsigned long encodeZeroSuppressedPixels(OutputPacketStream* ops, int neventstow
 	try {
 		//get a packet to encode the data of a camera that manage 30 samples for each pixel
 		Packet* p = ops->getPacketType("CHEC-CAM");
+		cout << "Write " << neventstowrite << " events " << endl;
 		
 		//get the sections of a packet
 		PacketHeader* packet_header = p->getPacketHeader();
