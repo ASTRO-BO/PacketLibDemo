@@ -1,5 +1,5 @@
-<stream name="ctacamera_allGEN" xmlns="http://iasfbo.inaf.it/telemetry">
-  <header name="CTAHeaderGEN" description="Header CTA" idref="packetlength">
+<stream name="ctacamera_all" xmlns="http://iasfbo.inaf.it/telemetry" bigendian="true">
+  <header name="CTAHeader" description="Header CTA" idref="packetlength">
     <field name="Version number" type="uint3" constvalue="4" />
     <field name="Type" type="uint1" constvalue="0" />
     <field name="DHFH" type="uint1" constvalue="1" />
@@ -13,7 +13,7 @@
     <field name="Compression Algorithm" type="uint8" id="packetlib:compression_algorithm" />
     <field name="Compression Level" type="uint8" id="packetlib:compression_level" />
   </header>
-  <packet name="CHEC-CAMGEN" description="CHEC-CAM">
+  <packet name="CHEC-CAM" description="CHEC-CAM">
     <datafieldheader>
       <field name="Ttime:secs" type="uint32" />
       <field name="Ttime:nsecs" type="uint32" />
@@ -28,7 +28,7 @@
       <field name="Number of pixels" type="uint16" id="ntt_0" />
       <field name="Number of samples" type="uint16" constvalue="40" />
       <field name="Number of pixels ID zero-suppressed" type="uint16" id="npixels_0" />
-      <rblock name="triggered_telescope_pixel1_40GEN" maxnumberofblocks="2048" idref="ntt_0">
+      <rblock name="triggered_telescope_pixel1_40" maxnumberofblocks="2048" idref="ntt_0">
         <field name="FADC00" type="uint16" />
         <field name="FADC01" type="uint16" />
         <field name="FADC02" type="uint16" />
@@ -70,7 +70,7 @@
         <field name="FADC38" type="uint16" />
         <field name="FADC39" type="uint16" />
       </rblock>
-      <rblock name="triggered_telescope_pixelIDGEN" maxnumberofblocks="2048" idref="npixels_0">
+      <rblock name="triggered_telescope_pixelID" maxnumberofblocks="2048" idref="npixels_0">
         <field name="pixelID" type="uint16" />
       </rblock>
     </sourcedatafield>
@@ -82,7 +82,7 @@
       <identifier idref="id2" value="40" />
     </identifiers>
   </packet>
-  <packet name="triggered_telescope1_30GEN" description="CTA Triggered Sim Telescope 30 samples">
+  <packet name="triggered_telescope1_30" description="CTA Triggered Sim Telescope 30 samples">
     <datafieldheader>
       <field name="LTtime" type="uint64" />
       <field name="ArrayID" type="uint16" />
@@ -96,7 +96,7 @@
       <field name="Number of pixels" type="uint16" id="ntt_1" />
       <field name="Number of samples" type="uint16" constvalue="30" />
       <field name="Number of pixels ID zero-suppressed" type="uint16" id="npixels_1" />
-      <rblock name="triggered_telescope_pixel1_30GEN" maxnumberofblocks="1900" idref="ntt_1">
+      <rblock name="triggered_telescope_pixel1_30" maxnumberofblocks="1900" idref="ntt_1">
         <field name="FADC00" type="uint16" />
         <field name="FADC01" type="uint16" />
         <field name="FADC02" type="uint16" />
@@ -128,7 +128,7 @@
         <field name="FADC28" type="uint16" />
         <field name="FADC29" type="uint16" />
       </rblock>
-      <rblock name="triggered_telescope_pixelIDGEN" maxnumberofblocks="1900" idref="npixels_1">
+      <rblock name="triggered_telescope_pixelID" maxnumberofblocks="1900" idref="npixels_1">
         <field name="pixelID" type="uint16" />
       </rblock>
     </sourcedatafield>
@@ -140,7 +140,7 @@
       <identifier idref="id2" value="30" />
     </identifiers>
   </packet>
-  <packet name="triggered_telescope1_40GEN" description="CTA Triggered Sim Telescope 40 samples">
+  <packet name="triggered_telescope1_40" description="CTA Triggered Sim Telescope 40 samples">
     <datafieldheader>
       <field name="LTtime" type="uint64" />
       <field name="ArrayID" type="uint16" />
@@ -154,7 +154,7 @@
       <field name="Number of pixels" type="uint16" id="ntt_2" />
       <field name="Number of samples" type="uint16" constvalue="40" />
       <field name="Number of pixels ID zero-suppressed" type="uint16" id="npixels_2" />
-      <rblock name="triggered_telescope_pixel1_40GEN" maxnumberofblocks="1900" idref="ntt_2">
+      <rblock name="triggered_telescope_pixel1_40" maxnumberofblocks="1900" idref="ntt_2">
         <field name="FADC00" type="uint16" />
         <field name="FADC01" type="uint16" />
         <field name="FADC02" type="uint16" />
@@ -196,7 +196,7 @@
         <field name="FADC38" type="uint16" />
         <field name="FADC39" type="uint16" />
       </rblock>
-      <rblock name="triggered_telescope_pixelIDGEN" maxnumberofblocks="1900" idref="npixels_2">
+      <rblock name="triggered_telescope_pixelID" maxnumberofblocks="1900" idref="npixels_2">
         <field name="pixelID" type="uint16" />
       </rblock>
     </sourcedatafield>
@@ -208,7 +208,7 @@
       <identifier idref="id2" value="40" />
     </identifiers>
   </packet>
-  <packet name="triggered_telescope1_50GEN" description="CTA Triggered Sim Telescope 50 samples">
+  <packet name="triggered_telescope1_50" description="CTA Triggered Sim Telescope 50 samples">
     <datafieldheader>
       <field name="LTtime" type="uint64" />
       <field name="ArrayID" type="uint16" />
@@ -222,7 +222,7 @@
       <field name="Number of pixels" type="uint16" id="ntt_3" />
       <field name="Number of samples" type="uint16" constvalue="50" />
       <field name="Number of pixels ID zero-suppressed" type="uint16" id="npixels_3" />
-      <rblock name="triggered_telescope_pixel1_50GEN" maxnumberofblocks="1900" idref="ntt_3">
+      <rblock name="triggered_telescope_pixel1_50" maxnumberofblocks="1900" idref="ntt_3">
         <field name="FADC00" type="uint16" />
         <field name="FADC01" type="uint16" />
         <field name="FADC02" type="uint16" />
@@ -274,7 +274,7 @@
         <field name="FADC48" type="uint16" />
         <field name="FADC49" type="uint16" />
       </rblock>
-      <rblock name="triggered_telescope_pixelIDGEN" maxnumberofblocks="1900" idref="npixels_3">
+      <rblock name="triggered_telescope_pixelID" maxnumberofblocks="1900" idref="npixels_3">
         <field name="pixelID" type="uint16" />
       </rblock>
     </sourcedatafield>
