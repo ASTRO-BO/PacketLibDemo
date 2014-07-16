@@ -1,4 +1,4 @@
-<stream name="ctacamera_all" xmlns="http://iasfbo.inaf.it/telemetry" bigendian="true">
+<stream name="ctacamera_all" xmlns="http://iasfbo.inaf.it/telemetry" bigendian="false">
   <header name="CTAHeader" description="Header CTA" idref="packetlength">
     <field name="Version number" type="uint3" constvalue="4" />
     <field name="Type" type="uint1" constvalue="0" />
@@ -13,7 +13,7 @@
     <field name="Compression Algorithm" type="uint8" id="packetlib:compression_algorithm" />
     <field name="Compression Level" type="uint8" id="packetlib:compression_level" />
   </header>
-  <packet name="CHEC-CAM" description="CHEC-CAM">
+  <packet name="CTA-CAM" description="CTA-CAM">
     <datafieldheader>
       <field name="Ttime:secs" type="uint32" />
       <field name="Ttime:nsecs" type="uint32" />

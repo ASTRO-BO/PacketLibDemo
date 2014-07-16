@@ -44,12 +44,12 @@
       </PathRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "10"
+            argument = "6 cameradatacompressed 1000"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "t1"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
       <EnvironmentVariables>

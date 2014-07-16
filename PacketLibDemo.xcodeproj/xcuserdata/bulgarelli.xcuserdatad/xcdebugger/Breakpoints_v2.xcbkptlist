@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "code/main.cpp"
-            timestampString = "422485999.375603"
+            timestampString = "427225232.009215"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "44"
-            endingLineNumber = "44"
+            startingLineNumber = "46"
+            endingLineNumber = "46"
             landmarkName = "getdword(dword value, bool streamisbigendian)"
             landmarkType = "7">
          </BreakpointContent>
@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "code/main.cpp"
-            timestampString = "422485999.375603"
+            timestampString = "427225232.009215"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "122"
-            endingLineNumber = "122"
+            startingLineNumber = "124"
+            endingLineNumber = "124"
             landmarkName = "main(int argc, char *argv[])"
             landmarkType = "7">
          </BreakpointContent>
@@ -42,11 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "code/main.cpp"
-            timestampString = "422485999.375603"
+            timestampString = "427225232.009215"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "233"
-            endingLineNumber = "233"
+            startingLineNumber = "235"
+            endingLineNumber = "235"
             landmarkName = "main(int argc, char *argv[])"
             landmarkType = "7">
          </BreakpointContent>
@@ -58,13 +58,105 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "code/main.cpp"
-            timestampString = "422485999.375603"
+            timestampString = "427225232.009215"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "232"
-            endingLineNumber = "232"
+            startingLineNumber = "234"
+            endingLineNumber = "234"
             landmarkName = "main(int argc, char *argv[])"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../devel/PacketLib/src/Packet.cpp"
+            timestampString = "427225505.323626"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1048"
+            endingLineNumber = "1048"
+            landmarkName = "Packet::decompressData()"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../devel/PacketLib/src/ByteStream.cpp"
+            timestampString = "427226046.010283"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "167"
+            endingLineNumber = "167"
+            landmarkName = "PacketLib::ByteStream::decompress(enum CompressionAlgorithms algorithmType, byte compressionLevel, dword dmax)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../devel/PacketLib/src/Packet.cpp"
+            timestampString = "427226197.418699"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "434"
+            endingLineNumber = "434"
+            landmarkName = "Packet::sizeMax()"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "PacketLib::Packet::createPacketType(char*, bool, unsigned short)"
+                  moduleName = "packetlibdemo"
+                  urlString = "file:///Users/bulgarelli/devel/PacketLib/src/Packet.cpp"
+                  timestampString = "427226217.576377"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "434"
+                  endingLineNumber = "434"
+                  offsetFromSymbolStart = "858">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "PacketLib::Packet::sizeMax()"
+                  moduleName = "packetlibdemo"
+                  urlString = "file:///Users/bulgarelli/devel/PacketLib/src/Packet.cpp"
+                  timestampString = "427226217.576512"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "434"
+                  endingLineNumber = "434"
+                  offsetFromSymbolStart = "4">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "PacketLib::Packet::decompressData()"
+                  moduleName = "packetlibdemo"
+                  urlString = "file:///Users/bulgarelli/devel/PacketLib/src/Packet.cpp"
+                  timestampString = "427226217.57662"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "434"
+                  endingLineNumber = "434"
+                  offsetFromSymbolStart = "110">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

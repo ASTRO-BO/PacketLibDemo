@@ -2,18 +2,23 @@
 
 
 
-void endMiB(bool exitprg, struct timespec start, unsigned long totbytes) {
+void endMiB(bool exitprg, struct timespec start, unsigned long totbytes, char* filename) {
 	struct timespec stop;
 	clock_gettime( CLOCK_MONOTONIC, &stop);
 	double time = timediff(start, stop);
 	//std::cout << "Read " << ncycread << " ByteSeq: MB/s " << (float) (ncycread * Demo::ByteSeqSize / time) / 1048576 << std::endl;
 	cout << "Result: it took  " << time << " s" << endl;
 	cout << "Result: rate: " << setprecision(10) << totbytes / 1000000 / time << " MiB/s" << endl;
-	cout << totbytes << endl;
+	cout << "Bytes processed: " << totbytes << endl;
+	if(filename != 0) {
+		File f;
+		f.open(filename, "r");
+		cout << "Byte compressed: " << f.fsize() << endl;
+	}
 	if(exitprg) exit(1);
 }
 
-void endHertz(bool exitprg, struct timespec start, unsigned long totbytes, unsigned long nops) {
+void endHertz(bool exitprg, struct timespec start, unsigned long totbytes, unsigned long nops, char* filename) {
 	struct timespec stop;
 	clock_gettime( CLOCK_MONOTONIC, &stop);
 	double time = timediff(start, stop);
@@ -21,7 +26,11 @@ void endHertz(bool exitprg, struct timespec start, unsigned long totbytes, unsig
 	cout << "Result: it took  " << time << " s" << endl;
 	cout << "Result: rate: " << setprecision(10) << nops / time << " Hertz" << endl;
 	cout << "Result: rate: " << setprecision(10) << totbytes / 1000000 / time << " MiB/s" << endl;
-	cout << totbytes << endl;
+	if(filename != 0) {
+		File f;
+		f.open(filename, "r");
+		cout << "Byte compressed: " << f.fsize() << endl;
+	}
 	if(exitprg) exit(1);
 }
 
@@ -33,7 +42,7 @@ unsigned long encodeNotZeroSuppressedPixelsSlow(OutputPacketStream* ops, int nev
 	
 	try {
 		//get a packet to encode the data of a camera that manage 30 samples for each pixel
-		Packet* p = ops->getPacketType("CHEC-CAM");
+		Packet* p = ops->getPacketType("CTA-CAM");
 		
 		//get the sections of a packet
 		PacketHeader* packet_header = p->getPacketHeader();
@@ -89,14 +98,14 @@ unsigned long encodeNotZeroSuppressedPixelsSlow(OutputPacketStream* ops, int nev
 	return totbytes;
 }
 
-unsigned long encodeNotZeroSuppressedPixels(OutputPacketStream* ops, int neventstowrite, bool compress) {
+unsigned long encodeNotZeroSuppressedPixels(OutputPacketStream* ops, int neventstowrite, int compress) {
 	
 	unsigned long totbytes = 0;
 	
 	try {
 		cout << "Write " << neventstowrite << " events " << endl;
 		//get a packet to encode the data of a camera that manage 30 samples for each pixel
-		Packet* p = ops->getPacketType("CHEC-CAM");
+		Packet* p = ops->getPacketType("CTA-CAM");
 		
 		//get the sections of a packet
 		PacketHeader* packet_header = p->getPacketHeader();
@@ -131,7 +140,8 @@ unsigned long encodeNotZeroSuppressedPixels(OutputPacketStream* ops, int nevents
 			//1) set the array
 			for(word pixel=0; pixel<numberOfCameraPixels; pixel++)
 				for(word sample=0; sample<numPixelSamples; sample++) {
-					word sampleValue = rand() % 100 + 50;
+					//word sampleValue = rand() % 100 + 50;
+					word sampleValue = sample; //AB
 					cameraData[pixel][sample] = sampleValue;
 				}
 			
@@ -142,7 +152,7 @@ unsigned long encodeNotZeroSuppressedPixels(OutputPacketStream* ops, int nevents
 			
 			//4) compress the data
 			if(compress)
-				p->compressData(LZ4, 4);
+				p->compressData(LZ4, compress);
 			
 			//write the encoded packet to output
 			ops->writePacket(p);
@@ -164,13 +174,13 @@ unsigned long encodeNotZeroSuppressedPixels(OutputPacketStream* ops, int nevents
 
 
 
-unsigned long encodeZeroSuppressedPixels(OutputPacketStream* ops, int neventstowrite, bool compress) {
+unsigned long encodeZeroSuppressedPixels(OutputPacketStream* ops, int neventstowrite, int compress) {
 	
 	unsigned long totbytes = 0;
 	
 	try {
 		//get a packet to encode the data of a camera that manage 30 samples for each pixel
-		Packet* p = ops->getPacketType("CHEC-CAM");
+		Packet* p = ops->getPacketType("CTA-CAM");
 		cout << "Write " << neventstowrite << " events " << endl;
 		
 		//get the sections of a packet
@@ -226,7 +236,7 @@ unsigned long encodeZeroSuppressedPixels(OutputPacketStream* ops, int neventstow
 			
 			//4) compress the data
 			if(compress)
-				p->compressData(LZ4, 4);
+				p->compressData(LZ4, compress);
 			
 			//write the encoded packet to output
 			ops->writePacket(p);
