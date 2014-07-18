@@ -8,8 +8,8 @@
     <field name="Source Sequence Counter" type="uint14" />
     <field name="Packet Length" type="uint32" id="packetlength" />
     <field name="CRC flag" type="uint2" constvalue="3" />
-    <field name="Packet Type" type="uint6" id="id1" />
-    <field name="Packet Subtype" type="uint8" id="id2" />
+    <field name="Packet Type" type="uint6" id="id1" constvalue="2" />
+    <field name="Packet Subtype" type="uint8" id="id2" constvalue="40" />
     <field name="Compression Algorithm" type="uint8" id="packetlib:compression_algorithm" />
     <field name="Compression Level" type="uint8" id="packetlib:compression_level" />
   </header>

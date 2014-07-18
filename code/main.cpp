@@ -137,18 +137,16 @@ int main(int argc, char *argv[]) {
 			Output* out;
 			
 			out = (Output*) new OutputFile(ops->isBigEndian());
-			char** param = (char**) new char*[2];
-			param[0] = (char*) filename; // file name
-			param[1] = 0;
-			out->open(param);
+			vector<string> param;
+			param.push_back(filename);
+			out->openDevice(param);
 			
 			/*
 			out = (Output*) new OutputSocketClient(ops->isBigEndian());
-			cout << "OUTPUT: SOCKET CLIENT 10001" << endl;
-			char** param = (char**) new char* [3];
-			param[0] = "localhost"; //host
-			param[1] = "10001"; //port
-			param[2] = 0;
+			vector<string> param;
+			param.push_back("localhost");
+			param.push_back("10001");
+			out->openDevice(param);
 			*/
 			// connect the output packet stream with the output
 			ops->setOutput(out);
@@ -165,19 +163,17 @@ int main(int argc, char *argv[]) {
 			//2) create input
 			
 			in = (Input*) new InputFile(ips->isBigEndian());
-			char** param = (char**) new char*[2];
-			param[0] = (char*) filename; // file name
-			param[1] = 0;
-			in->open(param); /// open input
+			vector<string> param;
+			param.push_back(filename);
+			in->openDevice(param); /// open input
 			
 			
 			/*
 			in = (Input*) new InputSocketServer(ips->isBigEndian());
 			cout << "INPUT: SOCKET SERVER 10001" << endl;
-			char** param = (char**) new char* [2];
-			param[0] = "10001"; //port
-			param[1] = 0;
-			in->open(param); /// open input
+			vector<string> param;
+			param.push_back("10001");
+			in->openDevice(param); /// open input
 			*/
 			
 			// connect the input packet stream with the input device
