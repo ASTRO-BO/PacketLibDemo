@@ -20,9 +20,10 @@
 
 
 #include "packetlibop.h"
+#include <hdf5.h>
 
 #define COMPRESSIONLEVEL 1
-
+#define DATASETNAME "CTA-CAM"
 
 void swap(byte* stream, dword dim) {
 	
@@ -223,6 +224,8 @@ int main(int argc, char *argv[]) {
 				cout << "5 decoding and get the array of camera data" << endl;
 			if(operation == 6)
 				cout << "6 decoding and get the array of camera data, additional data in the headers + decompression of data (if compressed)" << endl;
+			if(operation == 7)
+				cout << "7 converting the array of camera data to HDF5 file format" << endl;
 			
 			//get the packet
 			Packet* p = ips->getPacketType("CTA-CAM");
@@ -288,7 +291,62 @@ int main(int argc, char *argv[]) {
 								//cout << cameraData[pixel*nsamples + sample] << " ";
 							}
 							//cout << endl;
-						}
+						}	
+					}
+					if(operation == 7) {
+						
+						//get information from the packet: number of pixels and samples, trigger time, event number, packet length
+						int npixels =  packet_sdf->getFieldValue(indexNPixels);
+						int nsamples =  packet_sdf->getFieldValue(indexNSamples);
+						dword times =  packet_datafieldheader->getFieldValue_32i(indexTimes);
+						dword timensn = packet_datafieldheader->getFieldValue_32ui(indexTimens);
+						dword eventnum = packet_sdf->getFieldValue_32ui(indexEventNumber);
+						//cout << npixels << " " << nsamples << " " << times << " " << eventnum << endl;
+						//cout << p->getPacketHeader()->getPacketLength() << endl;
+						
+						//cout << cameraDataBS->size() << " " << p->isCompressed() << " " << p->getCompressionAlgorithm() << " " << p->getCompressionLevel() <<  endl;
+						
+						word* cameraData;
+						
+						//get the array of camera data - if packet is compressed, decompress them in a transparent way
+						ByteStreamPtr cameraDataDecompressed = p->getData();
+						cameraDataDecompressed->swapWordForIntel(); //take into account the endianity
+						cameraData = (word*)cameraDataDecompressed->stream;;
+						
+						
+						//do something with camera data, e.g.
+						//process the camera data
+						for(word pixel=0; pixel<npixels; pixel++) {
+							for(word sample=0; sample<nsamples; sample++) {
+								//cout << cameraData[pixel*nsamples + sample] << " ";
+							}
+						}	
+						
+						hid_t       file_id, dataset;   /* file identifier and dataset */
+						herr_t      status;
+						hid_t dataspace;
+
+						// Create a new file
+						string filename_str(filename);
+						string filename_hd = filename_str.append(".h5");
+						/* Create a new file using default properties. */
+						file_id = H5Fcreate(filename_hd.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+
+						// Create the scalar dataspace
+						space_id = H5Screate(H5S_SCALAR);
+						
+						// create a new dataset
+						dataset = H5Dcreate(file_id, DATASETNAME, H5T_NATIVE_B16, dataspace, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+                        
+						/// Write the data to the dataset using default transfer properties.
+						status = H5Dwrite(dataset, H5T_NATIVE_B16, H5S_ALL, H5S_ALL, H5P_DEFAULT, cameraData);
+						
+						/// Close/release resources.
+						H5Sclose(dataspace);
+						H5Dclose(dataset);
+						H5Fclose(file_id);
+						
+						
 						
 						
 					}
