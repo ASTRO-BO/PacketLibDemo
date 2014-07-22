@@ -91,7 +91,9 @@ int main(int argc, char *argv[]) {
 		//cout << "3 encoding zero suppressed camera (compressed)" << endl;
 		cout << "4 decoding for routing" << endl;
 		cout << "5 decoding and get the array of camera data" << endl;
-		cout << "6 decoding and get the array of camera data, additional data in the headers + decompression of data (if compressed)";
+		cout << "6 decoding and get the array of camera data, additional data in the headers + decompression of data (if compressed)" << endl;
+		cout << "7 decoding and access to camera data with packetlib, additional data in the headers" << endl;
+		cout << "8 HDF5 " << endl;
 		exit(0);
 	}
 
@@ -218,7 +220,9 @@ int main(int argc, char *argv[]) {
 			if(operation == 6)
 				cout << "6 decoding and get the array of camera data, additional data in the headers + decompression of data (if compressed)" << endl;
 			if(operation == 7)
-				cout << "7 converting the array of camera data to HDF5 file format" << endl;
+				cout << "7 decoding and access to camera data with packetlib, additional data in the headers" << endl;
+			if(operation == 8)
+				cout << "8 converting the array of camera data to HDF5 file format" << endl;
 			
 			//get the packet
 			Packet* p = ips->getPacketType("CTA-CAM");
@@ -281,13 +285,41 @@ int main(int argc, char *argv[]) {
 						//process the camera data
 						for(word pixel=0; pixel<npixels; pixel++) {
 							for(word sample=0; sample<nsamples; sample++) {
-								cout << cameraData[pixel*nsamples + sample] << " ";
+								cameraData[pixel*nsamples + sample];
+								//cout << cameraData[pixel*nsamples + sample] << " ";
 							}
-							cout << endl;
+							//cout << endl;
 						}
 
 					}
 					if(operation == 7) {
+						//e.g. get the camera data for data analysis or for storage
+						
+						//get information from the packet: number of pixels and samples, trigger time, event number, packet length
+						int npixels =  packet_sdf->getFieldValue(indexNPixels);
+						int nsamples =  packet_sdf->getFieldValue(indexNSamples);
+						dword times =  packet_datafieldheader->getFieldValue_32i(indexTimes);
+						dword timensn = packet_datafieldheader->getFieldValue_32ui(indexTimens);
+						dword eventnum = packet_sdf->getFieldValue_32ui(indexEventNumber);
+						//cout << npixels << " " << nsamples << " " << times << " " << eventnum << endl;
+						//cout << p->getPacketHeader()->getPacketLength() << endl;
+						
+						//cout << cameraDataBS->size() << " " << p->isCompressed() << " " << p->getCompressionAlgorithm() << " " << p->getCompressionLevel() <<  endl;
+						
+						
+						//do something with camera data, e.g.
+						//process the camera data
+						for(word pixel=0; pixel<npixels; pixel++) {
+							for(word sample=0; sample<nsamples; sample++) {
+								//p->getPacketSourceDataField()->getBlock(pixel)->getFieldValue(sample);
+								p->getPacketSourceDataField()->getBlock(pixel);
+								//cout << p->getPacketSourceDataField()->getBlock(pixel)->getFieldValue(sample) << " ";
+							}
+							//cout << endl;
+						}
+						
+					}
+					if(operation == 8) {
 						
 						//get information from the packet: number of pixels and samples, trigger time, event number, packet length
 						int npixels =  packet_sdf->getFieldValue(indexNPixels);
@@ -380,8 +412,6 @@ int main(int argc, char *argv[]) {
 						H5Aclose(att_evnum);
 						H5Dclose(dataset);
 						H5Fclose(file_id);
-						
->>>>>>> 5cd426f7ae201d1ada3db5c6787b259aa20585ea
 						
 						
 					}
