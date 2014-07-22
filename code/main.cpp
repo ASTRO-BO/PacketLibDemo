@@ -398,8 +398,8 @@ int main(int argc, char *argv[]) {
 						hid_t       file_id, dataset;   /* file identifier and dataset */
 						herr_t      status;
 						hsize_t size_dataset;
-						hid_t dataspace, dataspace_pix, dataspace_sam, dataspace_time, dataspace_timens, dataspace_evnum;
-						hid_t att_pix, att_sam, att_time, att_timens, att_evnum;
+						hid_t dataspace, dataspace_pix, dataspace_sam;
+						hid_t att_pix, att_sam;
 						
 						// Open the file
 						string filename_str(filename);
@@ -424,14 +424,10 @@ int main(int argc, char *argv[]) {
 						
 						///Load attributes for the dataset
 
-						//dataspace_pix = H5Screate(H5S_SCALAR);
 						att_pix = H5Aopen_name(dataset, "NPIXELS");
 						H5Aread(att_pix, H5T_NATIVE_UINT, &npixels);
-						
-						///Create an attribute for the dataset
-						//dataspace_sam = H5Screate(H5S_SCALAR);
+	
 						att_sam = H5Aopen_name(dataset, "NSAMPLES");			
-						/// Write attribute information
 						H5Aread(att_sam, H5T_NATIVE_UINT, &nsamples);
 
 						//do something with camera data, e.g.
