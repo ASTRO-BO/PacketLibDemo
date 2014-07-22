@@ -292,8 +292,8 @@ int main(int argc, char *argv[]) {
 					if(operation == 7) {
 						
 						//get information from the packet: number of pixels and samples, trigger time, event number, packet length
-						int npixels =  packet_sdf->getFieldValue(indexNPixels);
-						int nsamples =  packet_sdf->getFieldValue(indexNSamples);
+						int npixels = packet_sdf->getFieldValue(indexNPixels);
+						int nsamples = packet_sdf->getFieldValue(indexNSamples);
 						dword times =  packet_datafieldheader->getFieldValue_32i(indexTimes);
 						dword timensn = packet_datafieldheader->getFieldValue_32ui(indexTimens);
 						dword eventnum = packet_sdf->getFieldValue_32ui(indexEventNumber);
@@ -390,15 +390,11 @@ int main(int argc, char *argv[]) {
 						
 						int npixels;
 						int nsamples;
-						dword times;
-						dword timensn;
-						dword eventnum;
-																		
-						hsize_t bytearray_len[1] = {npixels*nsamples};
+
 						hid_t       file_id, dataset;   /* file identifier and dataset */
 						herr_t      status;
 						hsize_t size_dataset;
-						hid_t dataspace, dataspace_pix, dataspace_sam;
+						hid_t dataspace;
 						hid_t att_pix, att_sam;
 						
 						// Open the file
