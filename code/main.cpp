@@ -386,6 +386,76 @@ int main(int argc, char *argv[]) {
 						
 						
 					}
+					if(operation == 8) {
+						
+						int npixels;
+						int nsamples;
+						dword times;
+						dword timensn;
+						dword eventnum;
+																		
+						hsize_t bytearray_len[1] = {npixels*nsamples};
+						hid_t       file_id, dataset;   /* file identifier and dataset */
+						herr_t      status;
+						hsize_t size_dataset;
+						hid_t dataspace, dataspace_pix, dataspace_sam, dataspace_time, dataspace_timens, dataspace_evnum;
+						hid_t att_pix, att_sam, att_time, att_timens, att_evnum;
+						
+						// Open the file
+						string filename_str(filename);
+						string filename_hd = filename_str.append(".h5");
+						file_id = H5Fopen(filename_hd.c_str(), H5F_ACC_RDWR, H5P_DEFAULT);
+						
+						// open the dataset
+						dataset = H5Dopen2(file_id, DATASETNAME, H5P_DEFAULT);
+
+						cout << "Dataset: " << DATASETNAME << endl;
+						
+						dataspace = H5Dget_space(dataset);
+						size_dataset = H5Sget_simple_extent_npoints( dataspace );
+						
+						//cout << "Expected size: " << 40*2048 << endl;
+						//cout << "Size: " << size_dataset << endl;
+						word* cameraData = new word[size_dataset];				
+						
+						/// Write the data to the dataset using default transfer properties.
+						status = H5Dread(dataset, H5T_NATIVE_B16, H5S_ALL, H5S_ALL, H5P_DEFAULT, cameraData);
+
+						
+						///Load attributes for the dataset
+
+						//dataspace_pix = H5Screate(H5S_SCALAR);
+						att_pix = H5Aopen_name(dataset, "NPIXELS");
+						H5Aread(att_pix, H5T_NATIVE_UINT, &npixels);
+						
+						///Create an attribute for the dataset
+						//dataspace_sam = H5Screate(H5S_SCALAR);
+						att_sam = H5Aopen_name(dataset, "NSAMPLES");			
+						/// Write attribute information
+						H5Aread(att_sam, H5T_NATIVE_UINT, &nsamples);
+
+						//do something with camera data, e.g.
+						//process the camera data
+						for(word pixel=0; pixel<npixels; pixel++) {
+							for(word sample=0; sample<nsamples; sample++) {
+								cout << "Pixel " << pixel << ", Sample " << sample << " : " << cameraData[pixel*nsamples + sample] << " " << endl;
+							}
+						}	
+
+												
+						/// Close/release resources.
+						H5Sclose(dataspace);
+											
+						H5Aclose(att_pix);
+						H5Aclose(att_sam);
+						
+						H5Dclose(dataset);
+						H5Fclose(file_id);
+						
+						delete cameraData;
+						
+						
+					}
 				}
 			}
 			
