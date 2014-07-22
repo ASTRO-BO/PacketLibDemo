@@ -20,9 +20,10 @@
 
 
 #include "packetlibop.h"
+#include <hdf5.h>
 
 #define COMPRESSIONLEVEL 1
-
+#define DATASETNAME "CTA-CAM"
 
 void swap(byte* stream, dword dim) {
 	
@@ -216,6 +217,8 @@ int main(int argc, char *argv[]) {
 				cout << "5 decoding and get the array of camera data" << endl;
 			if(operation == 6)
 				cout << "6 decoding and get the array of camera data, additional data in the headers + decompression of data (if compressed)" << endl;
+			if(operation == 7)
+				cout << "7 converting the array of camera data to HDF5 file format" << endl;
 			
 			//get the packet
 			Packet* p = ips->getPacketType("CTA-CAM");
@@ -282,6 +285,103 @@ int main(int argc, char *argv[]) {
 							}
 							cout << endl;
 						}
+
+					}
+					if(operation == 7) {
+						
+						//get information from the packet: number of pixels and samples, trigger time, event number, packet length
+						int npixels =  packet_sdf->getFieldValue(indexNPixels);
+						int nsamples =  packet_sdf->getFieldValue(indexNSamples);
+						dword times =  packet_datafieldheader->getFieldValue_32i(indexTimes);
+						dword timensn = packet_datafieldheader->getFieldValue_32ui(indexTimens);
+						dword eventnum = packet_sdf->getFieldValue_32ui(indexEventNumber);
+						//cout << npixels << " " << nsamples << " " << times << " " << eventnum << endl;
+						//cout << p->getPacketHeader()->getPacketLength() << endl;
+						
+						//cout << cameraDataBS->size() << " " << p->isCompressed() << " " << p->getCompressionAlgorithm() << " " << p->getCompressionLevel() <<  endl;
+						
+						word* cameraData;
+						
+						//get the array of camera data - if packet is compressed, decompress them in a transparent way
+						ByteStreamPtr cameraDataDecompressed = p->getData();
+						cameraDataDecompressed->swapWordForIntel(); //take into account the endianity
+						cameraData = (word*)cameraDataDecompressed->stream;;
+												
+						//do something with camera data, e.g.
+						//process the camera data
+						for(word pixel=0; pixel<npixels; pixel++) {
+							for(word sample=0; sample<nsamples; sample++) {
+								//cout << cameraData[pixel*nsamples + sample] << " ";
+							}
+						}	
+						
+						hsize_t bytearray_len[1] = {npixels*nsamples};
+						hid_t       file_id, dataset;   /* file identifier and dataset */
+						herr_t      status;
+						hid_t dataspace, dataspace_pix, dataspace_sam, dataspace_time, dataspace_timens, dataspace_evnum;
+						hid_t att_pix, att_sam, att_time, att_timens, att_evnum;
+						
+						// Create a new file
+						string filename_str(filename);
+						string filename_hd = filename_str.append(".h5");
+						/* Create a new file using default properties. */
+						file_id = H5Fcreate(filename_hd.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+
+						// Create the array simple dataspace
+						dataspace = H5Screate_simple(1, bytearray_len, NULL);
+						
+						// create a new dataset
+						dataset = H5Dcreate(file_id, DATASETNAME, H5T_NATIVE_B16, dataspace, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+                        
+						/// Write the data to the dataset using default transfer properties.
+						status = H5Dwrite(dataset, H5T_NATIVE_B16, H5S_ALL, H5S_ALL, H5P_DEFAULT, cameraData);
+						
+						///Create an attribute for the dataset
+						dataspace_pix = H5Screate(H5S_SCALAR);
+						att_pix = H5Acreate2(dataset, "NPIXELS", H5T_NATIVE_UINT, dataspace_pix, H5P_DEFAULT, H5P_DEFAULT);						
+						/// Write attribute information
+						H5Awrite(att_pix, H5T_NATIVE_UINT, &npixels);
+						
+						///Create an attribute for the dataset
+						dataspace_sam = H5Screate(H5S_SCALAR);
+						att_sam = H5Acreate2(dataset, "NSAMPLES", H5T_NATIVE_UINT, dataspace_sam, H5P_DEFAULT, H5P_DEFAULT);						
+						/// Write attribute information
+						H5Awrite(att_sam, H5T_NATIVE_UINT, &nsamples);
+						
+						///Create an attribute for the dataset
+						dataspace_time = H5Screate(H5S_SCALAR);
+						att_time = H5Acreate2(dataset, "TIME S", H5T_NATIVE_UINT, dataspace_time, H5P_DEFAULT, H5P_DEFAULT);						
+						/// Write attribute information
+						H5Awrite(att_time, H5T_NATIVE_UINT, &times);
+						
+						///Create an attribute for the dataset
+						dataspace_timens = H5Screate(H5S_SCALAR);
+						att_timens = H5Acreate2(dataset, "TIME NS", H5T_NATIVE_UINT, dataspace_timens, H5P_DEFAULT, H5P_DEFAULT);						
+						/// Write attribute information
+						H5Awrite(att_timens, H5T_NATIVE_UINT, &timensn);
+						
+						///Create an attribute for the dataset
+						dataspace_evnum = H5Screate(H5S_SCALAR);
+						att_evnum = H5Acreate2(dataset, "EVENT NUM", H5T_NATIVE_UINT, dataspace_evnum, H5P_DEFAULT, H5P_DEFAULT);						
+						/// Write attribute information
+						H5Awrite(att_evnum, H5T_NATIVE_UINT, &eventnum);
+												
+						/// Close/release resources.
+						H5Sclose(dataspace);
+						H5Sclose(dataspace_pix);
+						H5Sclose(dataspace_sam);
+						H5Sclose(dataspace_time);
+						H5Sclose(dataspace_timens);
+						H5Sclose(dataspace_evnum);
+						H5Aclose(att_pix);
+						H5Aclose(att_sam);
+						H5Aclose(att_time);
+						H5Aclose(att_timens);
+						H5Aclose(att_evnum);
+						H5Dclose(dataset);
+						H5Fclose(file_id);
+						
+>>>>>>> 5cd426f7ae201d1ada3db5c6787b259aa20585ea
 						
 						
 					}
