@@ -138,14 +138,14 @@ unsigned long encodeNotZeroSuppressedPixels(OutputPacketStream* ops, int nevents
 			//1) set the array
 			for(word pixel=0; pixel<numberOfCameraPixels; pixel++)
 				for(word sample=0; sample<numPixelSamples; sample++) {
-					word sampleValue = rand() % 100 + 50;
-					//word sampleValue = sample; //AB
+					//word sampleValue = rand() % 100 + 50;
+					word sampleValue = sample; //AB
 					cameraData[pixel][sample] = sampleValue;
 				}
 			
 			//2) create a ByteStream that manage the array. Cast the camera data to an array of bytes
-			//ByteStreamPtr sourcedata = ByteStreamPtr(new ByteStream((byte*) cameraData, cameraDataSize, ops->isBigEndian()));
 			ByteStreamPtr sourcedata = Utility::getByteStream((byte*) cameraData, cameraDataSize, ops->isBigEndian());
+			
 			//3) encode the packet with the ByteStream of camera data
 			p->encodeAndSetData(sourcedata);
 			

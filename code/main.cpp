@@ -129,13 +129,10 @@ int main(int argc, char *argv[]) {
 		if(operation <= 3 )
 		{
 			cout << "create output packet stream" << endl;
-			ops = new OutputPacketStream();
-			ops->setFileNameConfig(configFileName.c_str());
-			ops->createStreamStructure();
+			ops = new OutputPacketStream(configFileName.c_str());
 
 			// Create and open an output device: file
 			Output* out;
-			
 			out = (Output*) new OutputFile(ops->isBigEndian());
 			vector<string> param;
 			param.push_back(filename);
@@ -281,9 +278,9 @@ int main(int argc, char *argv[]) {
 						//process the camera data
 						for(word pixel=0; pixel<npixels; pixel++) {
 							for(word sample=0; sample<nsamples; sample++) {
-								//cout << cameraData[pixel*nsamples + sample] << " ";
+								cout << cameraData[pixel*nsamples + sample] << " ";
 							}
-							//cout << endl;
+							cout << endl;
 						}
 						
 						

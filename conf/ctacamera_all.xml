@@ -82,7 +82,7 @@
       <identifier idref="id2" value="40" />
     </identifiers>
   </packet>
-  <packet name="triggered_telescope1_30" description="CTA Triggered Sim Telescope 30 samples">
+  <packet name="CTA-CAM-SST" description="CTA Triggered Camera SST">
     <datafieldheader>
       <field name="LTtime" type="uint64" />
       <field name="ArrayID" type="uint16" />
@@ -140,7 +140,7 @@
       <identifier idref="id2" value="30" />
     </identifiers>
   </packet>
-  <packet name="triggered_telescope1_40" description="CTA Triggered Sim Telescope 40 samples">
+  <packet name="CTA-CAM-MST" description="CTA Triggered Sim Camera MST">
     <datafieldheader>
       <field name="LTtime" type="uint64" />
       <field name="ArrayID" type="uint16" />
@@ -208,7 +208,7 @@
       <identifier idref="id2" value="40" />
     </identifiers>
   </packet>
-  <packet name="triggered_telescope1_50" description="CTA Triggered Sim Telescope 50 samples">
+  <packet name="CTA-CAM-LST" description="CTA Triggered Sim Camera LST">
     <datafieldheader>
       <field name="LTtime" type="uint64" />
       <field name="ArrayID" type="uint16" />

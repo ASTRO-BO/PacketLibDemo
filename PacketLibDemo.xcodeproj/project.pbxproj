@@ -17,6 +17,9 @@
 		DD1EB468192DDA3B008479D5 /* packetlibop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = packetlibop.cpp; sourceTree = "<group>"; };
 		DD1EB469192DDA3B008479D5 /* packetlibop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = packetlibop.h; sourceTree = "<group>"; };
 		DD1EB46A192E9724008479D5 /* ctacamera_all.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ctacamera_all.xml; sourceTree = "<group>"; };
+		DD5A99761979C76A00E82E87 /* exe1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = exe1.cpp; sourceTree = "<group>"; };
+		DD5A99771979D0BA00E82E87 /* exe2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = exe2.cpp; sourceTree = "<group>"; };
+		DD5A9978197DA33000E82E87 /* exe3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = exe3.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -32,6 +35,9 @@
 		DD1EB454192CE7E0008479D5 /* code */ = {
 			isa = PBXGroup;
 			children = (
+				DD5A9978197DA33000E82E87 /* exe3.cpp */,
+				DD5A99771979D0BA00E82E87 /* exe2.cpp */,
+				DD5A99761979C76A00E82E87 /* exe1.cpp */,
 				DD1EB468192DDA3B008479D5 /* packetlibop.cpp */,
 				DD1EB469192DDA3B008479D5 /* packetlibop.h */,
 				DD1EB459192CEBC4008479D5 /* main.cpp */,
