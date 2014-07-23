@@ -93,7 +93,9 @@ int main(int argc, char *argv[]) {
 		cout << "5 decoding and get the array of camera data" << endl;
 		cout << "6 decoding and get the array of camera data, additional data in the headers + decompression of data (if compressed)" << endl;
 		cout << "7 decoding and access to camera data with packetlib, additional data in the headers" << endl;
-		cout << "8 HDF5 " << endl;
+		cout << "8 packet to HDF5 " << endl;
+		cout << "9 HDF5 to packet (in progress) " << endl;
+		cout << "10 no packetlib" << endl;
 		exit(0);
 	}
 
@@ -167,7 +169,6 @@ int main(int argc, char *argv[]) {
 			param.push_back(filename);
 			in->openDevice(param); /// open input
 			
-			
 			/*
 			in = (Input*) new InputSocketServer(ips->isBigEndian());
 			cout << "INPUT: SOCKET SERVER 10001" << endl;
@@ -223,6 +224,8 @@ int main(int argc, char *argv[]) {
 				cout << "7 decoding and access to camera data with packetlib, additional data in the headers" << endl;
 			if(operation == 8)
 				cout << "8 converting the array of camera data to HDF5 file format" << endl;
+			if(operation == 9)
+				cout << "9 converting HDF5 to packet (in progress)" << endl;
 			
 			//get the packet
 			Packet* p = ips->getPacketType("CTA-CAM");
@@ -415,7 +418,7 @@ int main(int argc, char *argv[]) {
 						
 						
 					}
-					if(operation == 8) {
+					if(operation == 9) {
 						
 						int npixels;
 						int nsamples;
