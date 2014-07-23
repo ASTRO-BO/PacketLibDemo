@@ -125,13 +125,21 @@ unsigned long encodeNotZeroSuppressedPixels(OutputPacketStream* ops, int nevents
 		word cameraData[numberOfCameraPixels][numPixelSamples];
 		dword cameraDataSize = numberOfCameraPixels*numPixelSamples*sizeof(word);
 		
+		int telescopeID = 1;
+		
 		for(int i=0; i<neventstowrite; i++) {
 			
 			//store some informations on the headers
 			packet_datafieldheader->setFieldValue_32ui("Ttime:secs", timetrigger++);
 			packet_datafieldheader->setFieldValue_32ui("Ttime:nsecs", rand());
 			packet_sdf->setFieldValue_32ui("eventNumber", i);
+			packet_sdf->setFieldValue("TelescopeID", telescopeID);
 			
+			telescopeID++;
+			//max number of telescopes: 10
+			if(telescopeID > 10)
+				telescopeID = 1;
+			//cout << telescopeID << endl;
 			
 			//use the packetlib to set an array of pixels into the stream
 			

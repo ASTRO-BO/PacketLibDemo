@@ -96,6 +96,7 @@ int main(int argc, char *argv[]) {
 		cout << "8 packet to HDF5 " << endl;
 		cout << "9 HDF5 to packet (in progress) " << endl;
 		cout << "10 no packetlib" << endl;
+		cout << "11 no packetlib 2" << endl;
 		exit(0);
 	}
 
@@ -235,6 +236,7 @@ int main(int argc, char *argv[]) {
 			int indexNPixels = p->getPacketSourceDataField()->getFieldIndex("Number of pixels");
 			int indexNSamples = p->getPacketSourceDataField()->getFieldIndex("Number of samples");
 			int indexEventNumber = p->getPacketSourceDataField()->getFieldIndex("eventNumber");
+			int indexTelescopeID = p->getPacketSourceDataField()->getFieldIndex("TelescopeID");
 			int indexTimes = p->getPacketDataFieldHeader()->getFieldIndex("Ttime:secs");
 			int indexTimens = p->getPacketDataFieldHeader()->getFieldIndex("Ttime:nsecs");
 			
@@ -271,7 +273,15 @@ int main(int argc, char *argv[]) {
 						dword times =  packet_datafieldheader->getFieldValue_32i(indexTimes);
 						dword timensn = packet_datafieldheader->getFieldValue_32ui(indexTimens);
 						dword eventnum = packet_sdf->getFieldValue_32ui(indexEventNumber);
+						word telescopID = packet_sdf->getFieldValue(indexTelescopeID);
 						//cout << npixels << " " << nsamples << " " << times << " " << eventnum << endl;
+						//cout << telescopID << endl;
+						ByteStreamPtr test = p->getBSSourceDataField();
+						word* test2 = (word*) test->stream;
+						cout << (word)test2[2] << endl;
+						//for(int i=0; i<30; i++)
+						//cout << (word)test2[i] << " ";
+						//cout << endl;
 						//cout << p->getPacketHeader()->getPacketLength() << endl;
 						
 						//cout << cameraDataBS->size() << " " << p->isCompressed() << " " << p->getCompressionAlgorithm() << " " << p->getCompressionLevel() <<  endl;
@@ -590,8 +600,80 @@ int main(int argc, char *argv[]) {
 		} while (true);
 		fclose(fp);
 		endHertz(true, start, offset, nops);
+		
 	}
 	
+	if(operation == 11) {
+		cout << "no packetlib basic" << endl;
+		//open the file with the data
+		FILE* fp = fopen(filename, "r");
+		//get the size of headers and allocate memory for headers
+		word sizePacketHeader = 12;
+		bool streamisbigendian = false;
+		size_t result;
+		long offset = 0;
+		byte* packetheader  = (byte*) new word[sizePacketHeader];
+		
+		do {
+			nops++;
+			//--------------------------
+			//1) read the packet header
+			result = fread(packetheader, 1, sizePacketHeader, fp);
+			
+			if(result != sizePacketHeader)
+				break;
+			
+			//move to the next block of data
+			offset += sizePacketHeader;
+			fseek(fp, offset, SEEK_SET);
+			
+			//swap data if streaming is bigendian
+			if(streamisbigendian)
+				swap(packetheader, result);
+			
+			//get the packet size - we need to swap between two 16 bits type to get a 32 bit type
+			dword* packetHeader32 = (dword*) packetheader;
+			dword packetSize = packetHeader32[1] << 16;
+			packetSize += packetHeader32[1] >> 16;
+			
+			packetSize = packetSize + 1; //as required by CCSDS standard
+			
+			cout << "packetSize: " << packetSize << endl;
+			
+			//3) read the data header
+			byte* data  = (byte*) new byte[packetSize];
+			//read the data
+			result = fread(data, 1, packetSize, fp);
+			
+			if(result != packetSize)
+				break;
+			
+			//move to the next block of data
+			offset += packetSize;
+			fseek(fp, offset, SEEK_SET);
+			//swap data if streaming is bigendian
+			if(streamisbigendian)
+				swap(data, result);
+			
+			//5) use the data of the camera
+			word* cameraData = (word*) data;
+			
+			//for(int i=0; i<40; i++)
+			//cout << cameraData[i] << " ";
+			//cout << endl;
+			int telescopeID;
+			telescopeID = cameraData[8];
+			cout << "telescopeID: " << telescopeID << endl;
+			
+			
+		} while (true);
+		fclose(fp);
+		endHertz(true, start, offset, nops);
+			
+	}
+		
+	
+
 	//delete ips;
 	//delete ops;
 
