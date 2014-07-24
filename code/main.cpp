@@ -20,7 +20,7 @@
 
 
 #include "packetlibop.h"
-#include <hdf5.h>
+//#include <hdf5.h>
 
 #define COMPRESSIONLEVEL 1
 #define DATASETNAME "CTA-CAM"
@@ -93,8 +93,8 @@ int main(int argc, char *argv[]) {
 		cout << "5 decoding and get the array of camera data" << endl;
 		cout << "6 decoding and get the array of camera data, additional data in the headers + decompression of data (if compressed)" << endl;
 		cout << "7 decoding and access to camera data with packetlib, additional data in the headers" << endl;
-		cout << "8 packet to HDF5 " << endl;
-		cout << "9 HDF5 to packet (in progress) " << endl;
+		//cout << "8 packet to HDF5 " << endl;
+		//cout << "9 HDF5 to packet (in progress) " << endl;
 		cout << "10 no packetlib" << endl;
 		cout << "11 no packetlib 2" << endl;
 		exit(0);
@@ -223,10 +223,10 @@ int main(int argc, char *argv[]) {
 				cout << "6 decoding and get the array of camera data, additional data in the headers + decompression of data (if compressed)" << endl;
 			if(operation == 7)
 				cout << "7 decoding and access to camera data with packetlib, additional data in the headers" << endl;
-			if(operation == 8)
-				cout << "8 converting the array of camera data to HDF5 file format" << endl;
-			if(operation == 9)
-				cout << "9 converting HDF5 to packet (in progress)" << endl;
+			//if(operation == 8)
+				//cout << "8 converting the array of camera data to HDF5 file format" << endl;
+			//if(operation == 9)
+				//cout << "9 converting HDF5 to packet (in progress)" << endl;
 			
 			//get the packet
 			Packet* p = ips->getPacketType("CTA-CAM");
@@ -331,7 +331,7 @@ int main(int argc, char *argv[]) {
 							//cout << endl;
 						}
 						
-					}
+					}/*
 					if(operation == 8) {
 						
 						//get information from the packet: number of pixels and samples, trigger time, event number, packet length
@@ -362,6 +362,7 @@ int main(int argc, char *argv[]) {
 						
 						hsize_t bytearray_len[1] = {npixels*nsamples};
 						hid_t       file_id, dataset;   /* file identifier and dataset */
+						/*
 						herr_t      status;
 						hid_t dataspace, dataspace_pix, dataspace_sam, dataspace_time, dataspace_timens, dataspace_evnum;
 						hid_t att_pix, att_sam, att_time, att_timens, att_evnum;
@@ -370,6 +371,7 @@ int main(int argc, char *argv[]) {
 						string filename_str(filename);
 						string filename_hd = filename_str.append(".h5");
 						/* Create a new file using default properties. */
+						/*
 						file_id = H5Fcreate(filename_hd.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
 
 						// Create the array simple dataspace
@@ -434,6 +436,7 @@ int main(int argc, char *argv[]) {
 						int nsamples;
 
 						hid_t       file_id, dataset;   /* file identifier and dataset */
+						/*
 						herr_t      status;
 						hsize_t size_dataset;
 						hid_t dataspace;
@@ -489,7 +492,7 @@ int main(int argc, char *argv[]) {
 						delete cameraData;
 						
 						
-					}
+					}*/
 				}
 			}
 			

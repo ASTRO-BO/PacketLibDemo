@@ -72,7 +72,7 @@ ICON_DIR = ui
 
 #Set INCPATH to add the inclusion paths
 INCPATH = -I $(INCLUDE_DIR) 
-LIBS = -lstdc++ -lhdf5
+LIBS = -lstdc++ #-lhdf5
 #Insert the optional parameter to the compiler. The CFLAGS could be changed externally by the user
 CFLAGS   = -g
 #Insert the implicit parameter to the compiler:
