@@ -2,9 +2,9 @@
 # Template: exe lib version 2013-10-08
 # Use make variable_name=' options ' to override the variables or make -e to
 # override the file variables with the environment variables
-# 		make CFLAGS='-g'
+# 		make CPPFLAGS='-02'
 #		make prefix='/usr'
-#		make CC=gcc-4.8
+#		make CXX=gcc-4.8
 # External environment variable. 
 #	Build: CPLUS_INCLUDE_PATH LIBRARY_PATH
 #	Execution: LD_LIBRARY_PATH DYLD_LIBRARY_PATH LOCAL  
@@ -74,11 +74,10 @@ ICON_DIR = ui
 INCPATH = -I $(INCLUDE_DIR) 
 LIBS = -lstdc++ #-lhdf5
 #Insert the optional parameter to the compiler. The CFLAGS could be changed externally by the user
-CFLAGS   = -g
 #Insert the implicit parameter to the compiler:
-ALL_CFLAGS = -m64 -fexceptions -Wall $(CFLAGS) $(INCPATH)
+ALL_CFLAGS = -fexceptions -Wall $(INCPATH)
 #Use CPPFLAGS for the preprocessor
-CPPFLAGS =
+CPPFLAGS = -g
 
 ifneq (, $(findstring ctarta, $(LINKERENV)))
 	LIBS += -lpacket 
@@ -91,7 +90,6 @@ endif
 #Set addition parameters that depends by operating system
 
 
-LINK     = $CC
 #for link
 LFLAGS = -shared -Wl,-soname,$(TARGET1) -Wl,-rpath,$(DESTDIR)
 AR       = ar cqs
@@ -140,10 +138,10 @@ $(shell  cut $(INCLUDE_DIR)/$(VER_FILE_NAME) -f 3 > version)
 ####### 9) Pattern rules
 
 %.o : %.cpp
-	$(CC) $(CPPFLAGS) $(ALL_CFLAGS) -c $< -o $(OBJECTS_DIR)/$@
+	$(CXX) $(ALL_CFLAGS) -c $< -o $(OBJECTS_DIR)/$@
 
 %.o : %.c
-	$(CC) $(CPPFLAGS) $(ALL_CFLAGS) -c $< -o $(OBJECTS_DIR)/$@
+	$(CXX) $(ALL_CFLAGS) -c $< -o $(OBJECTS_DIR)/$@
 
 #only for documentation generation
 $(DOXY_SOURCE_DIR)/%.h : %.h
@@ -163,10 +161,10 @@ lib: staticlib
 	
 exe: makeobjdir $(OBJECTS)
 		test -d $(EXE_DESTDIR) || mkdir -p $(EXE_DESTDIR)
-		$(CC) $(CPPFLAGS) $(ALL_CFLAGS) -o $(EXE_DESTDIR)/$(EXE_NAME0) $(OBJECTS_DIR)/mac_clock_gettime.o  $(OBJECTS_DIR)/main.o  $(OBJECTS_DIR)/packetlibop.o $(LIBS)
-		$(CC) $(CPPFLAGS) $(ALL_CFLAGS) -o $(EXE_DESTDIR)/$(EXE_NAME1) $(OBJECTS_DIR)/exe1.o $(LIBS)
-		$(CC) $(CPPFLAGS) $(ALL_CFLAGS) -o $(EXE_DESTDIR)/$(EXE_NAME2) $(OBJECTS_DIR)/exe2.o $(LIBS)
-		$(CC) $(CPPFLAGS) $(ALL_CFLAGS) -o $(EXE_DESTDIR)/$(EXE_NAME3) $(OBJECTS_DIR)/exe3.o $(LIBS)
+		$(CXX) $(ALL_CFLAGS) -o $(EXE_DESTDIR)/$(EXE_NAME0) $(OBJECTS_DIR)/mac_clock_gettime.o  $(OBJECTS_DIR)/main.o  $(OBJECTS_DIR)/packetlibop.o $(LIBS)
+		$(CXX) $(ALL_CFLAGS) -o $(EXE_DESTDIR)/$(EXE_NAME1) $(OBJECTS_DIR)/exe1.o $(LIBS)
+		$(CXX) $(ALL_CFLAGS) -o $(EXE_DESTDIR)/$(EXE_NAME2) $(OBJECTS_DIR)/exe2.o $(LIBS)
+		$(CXX) $(ALL_CFLAGS) -o $(EXE_DESTDIR)/$(EXE_NAME3) $(OBJECTS_DIR)/exe3.o $(LIBS)
 
 staticlib: makelibdir makeobjdir $(OBJECTS)	
 		test -d $(LIB_DESTDIR) || mkdir -p $(LIB_DESTDIR)	
@@ -175,7 +173,7 @@ staticlib: makelibdir makeobjdir $(OBJECTS)
 	
 dynamiclib: makelibdir makeobjdir $(OBJECTS)	
 		$(DEL_FILE) $(TARGET) $(TARGET0) $(TARGET1) $(TARGET2)
-		$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS_DIR)/*.o $(LIBS)
+		$(CXX) $(LFLAGS) -o $(TARGET) $(OBJECTS_DIR)/*.o $(LIBS)
 		$(SYMLINK) $(TARGET) $(TARGET0)
 		$(SYMLINK) $(TARGET) $(TARGET1)
 		$(SYMLINK) $(TARGET) $(TARGET2)
